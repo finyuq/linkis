@@ -241,22 +241,22 @@ class LinkisSQLStatement(private[jdbc] val ujesSQLConnection: LinkisSQLConnectio
       this.resultSet.getMetaData
       val nextResultSet = this.resultSet.getNextResultSet
       current match {
-        case 1 =>
+        case Statement.CLOSE_CURRENT_RESULT =>
           // 1 - CLOSE CURRENT RESULT SET
           this.resultSet.close()
           this.resultSet.clearNextResultSet
-        case 2 =>
+        case Statement.KEEP_CURRENT_RESULT =>
           // 2 - KEEP CURRENT RESULT SET
           this.openedResultSets.add(this.resultSet)
           this.resultSet.clearNextResultSet
-        case 3 =>
+        case Statement.CLOSE_ALL_RESULTS =>
           // 3 - CLOSE ALL RESULT SET
           this.openedResultSets.add(this.resultSet)
           closeAllOpenedResultSet()
         case _ =>
           throw new LinkisSQLException(
             LinkisSQLErrorCode.NOSUPPORT_STATEMENT,
-            "getMoreResults with current not in 1,2,3 is not supported"
+            "getMoreResults with current not in 1,2,3 is not supported, see Statement.getMoreResults"
           )
       }
       this.resultSet = nextResultSet
